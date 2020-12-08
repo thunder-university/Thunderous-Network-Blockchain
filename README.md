@@ -1,166 +1,221 @@
-# Substrate Node Template
+# Open Grant Proposal
 
-A new FRAME-based Substrate node, ready for hacking :rocket:
 
-## Local Development
+* **Project:** Thunderous Network - An Industry-Drive Education Protocol. 
+* **Webiste:** https://thunder.university
+* **Whitepaper:** [Whitepaper](http://thunder.university/wp-content/uploads/2020/11/Whitepaper-draft.pdf)
+* **Proposer:** https://github.com/kaicodex
+* **Payment Address:** 1LBN9Y6BpSBAWLpsV1FVog9DiCxut2gmPA
 
-Follow these steps to prepare a local Substrate development environment :hammer_and_wrench:
+## Project Overview :page_facing_up: 
 
-### Setup
+### Overview
 
-Setup instructions can be found at the
-[Substrate Developer Hub](https://substrate.dev/docs/en/knowledgebase/getting-started).
+**Brief description of the project**
 
-### Build
+Reinvigorate the Master-Apprentice Model. Thunderous Protocol is the blockchain network implementing the industry-driven education protocol. Thunder.University will be the DApp using Thunderous protocol.
 
-Once the development environment is set up, build the node template. This command will build the
-[Wasm](https://substrate.dev/docs/en/knowledgebase/advanced/executor#wasm-execution) and
-[native](https://substrate.dev/docs/en/knowledgebase/advanced/executor#native-execution) code:
+![](http://thunder.university/wp-content/uploads/2020/11/3-Gap-Thunderous-Ecosystem-v1.jpg)
 
-```bash
-WASM_BUILD_TOOLCHAIN=nightly-2020-10-05 cargo build --release
-```
+Tokenization with customized blockchain rules will push learning, teaching, mentoring and innovating experience to a new level. 
 
-## Run
 
-### Single Node Development Chain
+**An indication of how you will integrate this project into Substrate / Polkadot / Kusama.**
 
-Purge any existing dev chain state:
+* Create our own blockchain network with Substrate technologies.
+* Develop the pallets/runtime modules for the education protocol.
+* Interested to launch on Kusama, then conduct IPO to get a slot on Polkadot.
 
-```bash
-./target/release/node-template purge-chain --dev
-```
+**An indication of why your team is interested in creating this project.**
 
-Start a dev chain:
+* :point_right: Launched the Substrate Runtime Developer Program. We worked together with Parity Technologies and Acala Network. :100:We'd love to use this protocol to run the program one day. More http://ic.guru/substrate
+* :point_right: Using industry-driven & apprentice-master approach at Industry Connect - a global tech education under our group.
+* :point_right: Operating a successful education Saas software which gives us the rich knowledge in education management. More info http://aimy.io
+* :point_right: Piloted the concept of the protocol with tokenization in a centralized solution, we've received amazing result. More info http://io.ic.guru/
 
-```bash
-./target/release/node-template --dev
-```
 
-Or, start a dev chain with detailed logging:
+### Project Details 
 
-```bash
-RUST_LOG=debug RUST_BACKTRACE=1 ./target/release/node-template -lruntime=debug --dev
-```
+The whole project consists of two main components. This application focuses on the blockchain/protocol part.
 
-### Multi-Node Local Testnet
+* The blockchain and protocol, it is called Thunderous Network.
+* The DApp implementing the protocol, it is called Thunder University.
 
-If you want to see the multi-node consensus algorithm in action, refer to
-[our Start a Private Network tutorial](https://substrate.dev/docs/en/tutorials/start-a-private-network/).
+Here are some creatives illustrating how the protocol will work
 
-## Template Structure
+**Overview of Use Cases**
 
-A Substrate project such as this consists of a number of components that are spread across a few
-directories.
+**Here are some typical use cases**
+* Learn & Earn Back Model
+  * A learner pays the full course fee, and will get half of that refunded after meeting certain criteria during the learning journey e.g. attendance is met.
+* Sponsored Learning Model
+  * A learner deposits the full course fee, the employer also deposits the full course fee for the learner. When the learner meets certain criteria set by employers, employer's charged, learner's deposit is refunded. Otherwise learner is charged, employer is refunded.
+* Learn to Earn Model
+  * Variation 1: A learner gets paid after meeting certain criteria. No upfront fee is required.
+  * Variation 2: A learner gets paid after meeting each KPI of the whole criteria. No upfront fee is required.
 
-### Node
+![Transactions overview](https://mvp.studio/wp-content/uploads/2020/11/Picture6.png)
 
-A blockchain node is an application that allows users to participate in a blockchain network.
-Substrate-based blockchain nodes expose a number of capabilities:
+**Master-Led Learning & Startup Journey**
 
--   Networking: Substrate nodes use the [`libp2p`](https://libp2p.io/) networking stack to allow the
-    nodes in the network to communicate with one another.
--   Consensus: Blockchains must have a way to come to
-    [consensus](https://substrate.dev/docs/en/knowledgebase/advanced/consensus) on the state of the
-    network. Substrate makes it possible to supply custom consensus engines and also ships with
-    several consensus mechanisms that have been built on top of
-    [Web3 Foundation research](https://research.web3.foundation/en/latest/polkadot/NPoS/index.html).
--   RPC Server: A remote procedure call (RPC) server is used to interact with Substrate nodes.
+![Master-Led overview](https://mvp.studio/wp-content/uploads/2020/11/Picture1.jpg)
 
-There are several files in the `node` directory - take special note of the following:
+**Employer-Led Learning Journey & Employment Journey**
 
--   [`chain_spec.rs`](./node/src/chain_spec.rs): A
-    [chain specification](https://substrate.dev/docs/en/knowledgebase/integrate/chain-spec) is a
-    source code file that defines a Substrate chain's initial (genesis) state. Chain specifications
-    are useful for development and testing, and critical when architecting the launch of a
-    production chain. Take note of the `development_config` and `testnet_genesis` functions, which
-    are used to define the genesis state for the local development chain configuration. These
-    functions identify some
-    [well-known accounts](https://substrate.dev/docs/en/knowledgebase/integrate/subkey#well-known-keys)
-    and use them to configure the blockchain's initial state.
--   [`service.rs`](./node/src/service.rs): This file defines the node implementation. Take note of
-    the libraries that this file imports and the names of the functions it invokes. In particular,
-    there are references to consensus-related topics, such as the
-    [longest chain rule](https://substrate.dev/docs/en/knowledgebase/advanced/consensus#longest-chain-rule),
-    the [Aura](https://substrate.dev/docs/en/knowledgebase/advanced/consensus#aura) block authoring
-    mechanism and the
-    [GRANDPA](https://substrate.dev/docs/en/knowledgebase/advanced/consensus#grandpa) finality
-    gadget.
+![Employer-Led overview](https://mvp.studio/wp-content/uploads/2020/11/Picture3.jpg)
 
-After the node has been [built](#build), refer to the embedded documentation to learn more about the
-capabilities and configuration parameters that it exposes:
+**How Verified Professional Skills Work**
 
-```shell
-./target/release/node-template --help
-```
+![Verified Professional Skills](https://mvp.studio/wp-content/uploads/2020/11/Picture4.jpg)
 
-### Runtime
 
-In Substrate, the terms
-"[runtime](https://substrate.dev/docs/en/knowledgebase/getting-started/glossary#runtime)" and
-"[state transition function](https://substrate.dev/docs/en/knowledgebase/getting-started/glossary#stf-state-transition-function)"
-are analogous - they refer to the core logic of the blockchain that is responsible for validating
-blocks and executing the state changes they define. The Substrate project in this repository uses
-the [FRAME](https://substrate.dev/docs/en/knowledgebase/runtime/frame) framework to construct a
-blockchain runtime. FRAME allows runtime developers to declare domain-specific logic in modules
-called "pallets". At the heart of FRAME is a helpful
-[macro language](https://substrate.dev/docs/en/knowledgebase/runtime/macros) that makes it easy to
-create pallets and flexibly compose them to create blockchains that can address
-[a variety of needs](https://www.substrate.io/substrate-users/).
 
-Review the [FRAME runtime implementation](./runtime/src/lib.rs) included in this template and note
-the following:
+### Ecosystem Fit 
+As far as we know, our protocol would be the first education centric protocol in the ecosystem. 
 
--   This file configures several pallets to include in the runtime. Each pallet configuration is
-    defined by a code block that begins with `impl $PALLET_NAME::Trait for Runtime`.
--   The pallets are composed into a single runtime by way of the
-    [`construct_runtime!`](https://crates.parity.io/frame_support/macro.construct_runtime.html)
-    macro, which is part of the core
-    [FRAME Support](https://substrate.dev/docs/en/knowledgebase/runtime/frame#support-library)
-    library.
+We're confident to roll this out and have its pratical use so that we would bring good communities to the Polkadot/Substrate ecosystem.
 
-### Pallets
+Notably, 
+* We've been operating a tech education business since 2013.
+* We've been operating a Saas education management software since 2015.
+* We've piloted some of the concept from the protocol since 2017 and received expected results.
 
-The runtime in this project is constructed using many FRAME pallets that ship with the
-[core Substrate repository](https://github.com/paritytech/substrate/tree/master/frame) and a
-template pallet that is [defined in the `pallets`](./pallets/template/src/lib.rs) directory.
 
-A FRAME pallet is compromised of a number of blockchain primitives:
+## Team :busts_in_silhouette:
 
--   Storage: FRAME defines a rich set of powerful
-    [storage abstractions](https://substrate.dev/docs/en/knowledgebase/runtime/storage) that makes
-    it easy to use Substrate's efficient key-value database to manage the evolving state of a
-    blockchain.
--   Dispatchables: FRAME pallets define special types of functions that can be invoked (dispatched)
-    from outside of the runtime in order to update its state.
--   Events: Substrate uses [events](https://substrate.dev/docs/en/knowledgebase/runtime/events) to
-    notify users of important changes in the runtime.
--   Errors: When a dispatchable fails, it returns an error.
--   Trait: The `Trait` configuration interface is used to define the types and parameters upon which
-    a FRAME pallet depends.
+### Team members
+* Kai Zhang
+* David Kurniawan
+* Allan Liang
 
-### Run in Docker
+Advisors & Supporters
+* Ray Lu (Group Founder)
+* Justin Pham
+* Shannon Christie
 
-First, install [Docker](https://docs.docker.com/get-docker/) and
-[Docker Compose](https://docs.docker.com/compose/install/).
+### Team Website	
+* https://thunder.university
 
-Then run the following command to start a single node development chain.
+### Legal Structure 
+The Thunderous protocol team is based in New Zealand. The Thunder company will be setup in blockchain friendly jurisdiction,e g. Singapore.
 
-```bash
-./scripts/docker_run.sh
-```
+### Team's experience
 
-This command will firstly compile your code, and then start a local development network. You can
-also replace the default command (`cargo build --release && ./target/release/node-template --dev --ws-external`)
-by appending your own. A few useful ones are as follow.
+Kai Zhang
+* CTO at Aimy.io (A company under MVP STUDIO Group) - developed an education Saas software from inception to 100K active users with $US 35M transactions of invoices per year.
+* Holding two degrees ie. economics and software developemt.
+* Worked as tech mentor at Industry Connect.
 
-```bash
-# Run Substrate node without re-compiling
-./scripts/docker_run.sh ./target/release/node-template --dev --ws-external
+David Kurniawan
+* Full-stack Software Developer at Aimy.io (A company under MVP STUDIO Group)
+* Postgraduate Dipoma in Computing.
+* Extremely hard worker.
 
-# Purge the local dev chain
-./scripts/docker_run.sh ./target/release/node-template purge-chain --dev
+Allan Liang
+* Senior Full-stack Software Developer at Aimy.io (A company under MVP STUDIO Group)
+* Postgraduate Dipoma in Computing.
+* Led the team created a payment product in NZ.
 
-# Check whether the code is compilable
-./scripts/docker_run.sh cargo check
-```
+Ray Lu (Group Company Founder)
+* Currently focusing Bit.Country development which was approved for the open grant.
+* A Polkadot Ambassador based in New Zaland.
+* Has hand-on coding experience over a decade. He wrote the first line of code in Basic when he was 15 on IBM-8086.
+* Founded a Saas Startup from inception to growth. So far it has transacted USD$173,899,846 of bookings and serving 107,800 active users.
+* Founded a Tech Edu Startup from inception to growth that has 300 new enrollments every year with a customer base across 8 countries.
+* Bsc in Computer Science at Univerity of Auckland. (Top 1 in writing compiler subject)
+
+
+### Team Code Repos
+* https://github.com/thunder-university
+
+
+### Team LinkedIn Profiles
+* Kai Zhang - https://www.linkedin.com/in/kai-zhang-02676a77/
+* David Kurniawan -  https://www.linkedin.com/in/david-kur/
+* Allan Liang - https://www.linkedin.com/in/allan-liang-0a8555124/
+
+Advisor & Mentor
+* Ray Lu (Polkadot Ecosystem) - https://www.linkedin.com/in/codemeit
+* Shannon Christie (Substrate) - https://www.linkedin.com/in/shannonchristie/
+* Justin Pham (Substrate) - https://www.linkedin.com/in/justinphamit/
+
+## Development Roadmap :nut_and_bolt: 
+
+### Overview
+* **Total Estimated Duration:** 1 Month
+* **Full-time equivalent (FTE):**  2.5 FTE
+* **Total Costs:** 1 BTC
+
+### Implement Substrate Modules 
+* **Estimated Duration:** 1 month
+* **FTE:**  2.5
+* **Costs:** 1 BTC
+
+To understand the pallets specified below, it is helpful to understand the following use cases for program fees
+
+* **Learn & Earn Back Model**
+  * A learner pays the full course fee, and will get half of that refunded after meeting certain criteria during the learning journey e.g. attendance is met.
+* **Sponsored Learning Model**
+  * A learner deposits the full course fee, the employer also deposits the full course fee for the learner. When the learner meets certain criteria set by employers, employer's charged, learner's deposit is refunded. Otherwise learner is charged, employer is refunded.
+* **Learn to Earn Model**
+  * Variation 1: A learner gets paid after meeting certain criteria. No upfront fee is required.
+  * Variation 2: A learner gets paid after meeting each KPI of the whole criteria. No upfront fee is required.
+  
+
+| Number | Deliverable | Specification |
+| ------------- | ------------- | ------------- |
+| 0a. | License | Apache 2.0 |
+| 0b. | Documentation |This will be done at code level as well as updated whitepaper.|
+| 0c. | Testing Guide | The code will have proper unit-test coverage (e.g. 90%) to ensure functionality and robustness. | 
+| 1. | Program Pallet |Masters can manage programs in this pallet by using create_program, create_intake for program. A program can be a course or project with trackable KPIs.|  
+| 2. | RuleEngine Pallet|**This is the most complicated pallet within this milestone**. Users can create rules, a program can link to a rule to determine the actions to be executed. A rule defines 1) KPIs 2) Actions linked to KPIs. An action can be 1) Taking Deposit 2) Refund / Partial Refund 3) Reward 4) Certification 5) ProSet. A ProSet can be 1) Skill 2) Experience.|
+| 3. | Enrolment Pallet|Users can enrol_program with fees, cancel_enrolment, master can terminate_enrolment. All the logic herein is determined by the rule set in the program. Actions of the rules are executed automatically.|
+| 4. | KPI Pallet |In the rule applied to the program, it requires KPI logs to determine if the criteria in the rule is met for the program. If certain / all KPIs are met, the actions within the rule will be executed in the pallet. Actions could be taking deposit, refund, partial refund, reward, certification etc. Program owners can also apply the rule to the program in this pallet.
+| 5. | Sponsorship Pallet |Anyone can sponsor_someone to take on a program. e.g. Employer sponsor an apprentice to learn a course. For more, please refer to use case overview: Sponsored Learning Model|  
+| 6. | Attendance Pallet|log_attendance is a special KPI of a program. A learner needs to scan the QR code displayed randomly on the course content or UI. The scan will trigger an extrinsic to function to proof the engagement. In the future, we will create an mobile app to scan the QR code and make calls to the node. |  
+| 7. | Endorse Pallet | Users can endorse others with skills and experience. Yes endorsement comes with a cost, it will be more trustworlthy than LinkedIn.|  
+| 8. | Substrate chain | The pallets within this milestone will be hosted by the Thunderous Network, a substrate based blockchain. |  
+| 9. | Docker | We will provide a dockerfile to demonstrate the full functionality of our chain |
+
+
+### Community engagement
+
+**Published Medium Article**
+
+* [Introducing the Master-Apprentice model for the modern age!](https://thunder-university.medium.com/introducing-the-master-apprentice-model-for-the-modern-age-2aa1006e1e77). 
+
+**Facebook Campaign**
+
+* Concept Validation
+
+![Thunder University](https://mvp.studio/wp-content/uploads/2020/11/20201115215850.png)
+
+**Substrate Course**
+
+
+**Promo Video**
+[![Watch Video](https://mvp.studio/wp-content/uploads/2020/11/thunder.jpg)](https://vimeo.com/442526152/aaa4ba2c40)
+
+
+## Future Plans
+
+After developing the protocol, we will start implementing the dapp. We are very interested to integrate with Kusama and Polkadot to share the secuirty. We will be interested to do crowd funding to connect with Polkadot.
+
+
+## Additional Information :heavy_plus_sign: 
+
+**What work has been done so far?**
+
+* We've proved the model with centralized solution.
+* We've created our branding and website.
+* The white paper had been done and ready to make public.
+
+**Are there are any teams who have already contributed (financially) to the project?**
+
+MVP Studio, our group company, had invested all the resources into this project so far.
+
+**Have you applied for other grants so far**
+
+The other team (Bit.country) under our group had also applied for the open grant which had been approved.
+Their team will offer us some mentorship along the way. Some of us worked in the same office based in Auckland, New Zealand.
+

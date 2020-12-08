@@ -1,46 +1,60 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 // `construct_runtime!` does a lot of recursion and requires us to increase the limit to 256.
-#![recursion_limit="256"]
+#![recursion_limit = "256"]
 
 // Make the WASM binary available.
 #[cfg(feature = "std")]
 include!(concat!(env!("OUT_DIR"), "/wasm_binary.rs"));
 
-use sp_std::prelude::*;
-use sp_core::{crypto::KeyTypeId, OpaqueMetadata};
-use sp_runtime::{
-	ApplyExtrinsicResult, generic, create_runtime_str, impl_opaque_keys, MultiSignature,
-	transaction_validity::{TransactionValidity, TransactionSource},
-};
-use sp_runtime::traits::{
-	BlakeTwo256, Block as BlockT, IdentityLookup, Verify, IdentifyAccount, NumberFor, Saturating,
-};
+use orml_currencies::BasicCurrencyAdapter;
+use pallet_grandpa::fg_primitives;
+use pallet_grandpa::{AuthorityId as GrandpaId, AuthorityList as GrandpaAuthorityList};
+use pallet_transaction_payment::{Multiplier, TargetedFeeAdjustment};
 use sp_api::impl_runtime_apis;
 use sp_consensus_aura::sr25519::AuthorityId as AuraId;
-use pallet_grandpa::{AuthorityId as GrandpaId, AuthorityList as GrandpaAuthorityList};
-use pallet_grandpa::fg_primitives;
-use sp_version::RuntimeVersion;
+use sp_core::{
+	crypto::KeyTypeId, OpaqueMetadata, 
+	u32_trait::{_1, _2, _3, _4}};
+use sp_runtime::traits::{
+	BlakeTwo256, Block as BlockT, IdentifyAccount, IdentityLookup, NumberFor, Saturating, Verify,
+};
+use sp_runtime::{
+	create_runtime_str, generic, impl_opaque_keys,
+	transaction_validity::{TransactionSource, TransactionValidity},
+	ApplyExtrinsicResult, FixedPointNumber, ModuleId, MultiSignature, Perquintill,
+};
+use sp_std::prelude::*;
 #[cfg(feature = "std")]
 use sp_version::NativeVersion;
+use sp_version::RuntimeVersion;
+
+use frame_system::{EnsureOneOf, EnsureRoot, RawOrigin};
+
 
 // A few exports that help ease life for downstream crates.
-#[cfg(any(feature = "std", test))]
-pub use sp_runtime::BuildStorage;
-pub use pallet_timestamp::Call as TimestampCall;
-pub use pallet_balances::Call as BalancesCall;
-pub use sp_runtime::{Permill, Perbill};
+pub use constants::currency::*;
+pub use primitives::{CurrencyId, Balance};
+
 pub use frame_support::{
-	construct_runtime, parameter_types, StorageValue,
-	traits::{KeyOwnerProofSystem, Randomness},
+	construct_runtime, parameter_types,
+	traits::{KeyOwnerProofSystem, Randomness,Contains,ContainsLengthBound},
 	weights::{
-		Weight, IdentityFee,
 		constants::{BlockExecutionWeight, ExtrinsicBaseWeight, RocksDbWeight, WEIGHT_PER_SECOND},
+		IdentityFee, Weight,
 	},
+	StorageValue,
 };
 
-/// Import the template pallet.
-pub use pallet_template;
+pub use pallet_balances::Call as BalancesCall;
+use pallet_contracts_rpc_runtime_api::ContractExecResult;
+pub use pallet_timestamp::Call as TimestampCall;
+#[cfg(any(feature = "std", test))]
+pub use sp_runtime::BuildStorage;
+pub use sp_runtime::{Perbill, Permill, Percent};
 
+mod constants;
+// pub mod constants;
+// use constants::{currency::*, time::*};
 /// An index to a block.
 pub type BlockNumber = u32;
 
@@ -55,9 +69,6 @@ pub type AccountId = <<Signature as Verify>::Signer as IdentifyAccount>::Account
 /// never know...
 pub type AccountIndex = u32;
 
-/// Balance of an account.
-pub type Balance = u128;
-
 /// Index of a transaction in the chain.
 pub type Index = u32;
 
@@ -66,6 +77,8 @@ pub type Hash = sp_core::H256;
 
 /// Digest item type.
 pub type DigestItem = generic::DigestItem<Hash>;
+// Amount
+pub type Amount = i128;
 
 /// Opaque types. These are used by the CLI to instantiate machinery that don't need to know
 /// the specifics of the runtime. They can then be made to be agnostic over specific formats
@@ -92,11 +105,11 @@ pub mod opaque {
 }
 
 pub const VERSION: RuntimeVersion = RuntimeVersion {
-	spec_name: create_runtime_str!("node-template"),
-	impl_name: create_runtime_str!("node-template"),
+	spec_name: create_runtime_str!("bitcountry-node"),
+	impl_name: create_runtime_str!("bitcountry-node"),
 	authoring_version: 1,
-	spec_version: 1,
-	impl_version: 1,
+	spec_version: 8,
+	impl_version: 0,
 	apis: RUNTIME_API_VERSIONS,
 	transaction_version: 1,
 };
@@ -109,6 +122,8 @@ pub const SLOT_DURATION: u64 = MILLISECS_PER_BLOCK;
 pub const MINUTES: BlockNumber = 60_000 / (MILLISECS_PER_BLOCK as BlockNumber);
 pub const HOURS: BlockNumber = MINUTES * 60;
 pub const DAYS: BlockNumber = HOURS * 24;
+
+pub const BOLT: Balance = CENTS;
 
 /// The version information used to identify this runtime when compiled natively.
 #[cfg(feature = "std")]
@@ -130,8 +145,6 @@ parameter_types! {
 	pub const MaximumBlockLength: u32 = 5 * 1024 * 1024;
 	pub const Version: RuntimeVersion = VERSION;
 }
-
-// Configure FRAME pallets to include in runtime.
 
 impl frame_system::Trait for Runtime {
 	/// The basic call filter to use in dispatchable.
@@ -179,7 +192,6 @@ impl frame_system::Trait for Runtime {
 	/// Version of the runtime.
 	type Version = Version;
 	/// Converts a module to the index of the module in `construct_runtime!`.
-	///
 	/// This type is being generated by `construct_runtime!`.
 	type PalletInfo = PalletInfo;
 	/// What to do if a new account is created.
@@ -215,6 +227,7 @@ impl pallet_grandpa::Trait for Runtime {
 	type WeightInfo = ();
 }
 
+// Module accounts of runtime
 parameter_types! {
 	pub const MinimumPeriod: u64 = SLOT_DURATION / 2;
 }
@@ -245,7 +258,11 @@ impl pallet_balances::Trait for Runtime {
 }
 
 parameter_types! {
-	pub const TransactionByteFee: Balance = 1;
+	/// 1 BCG = 1 Megabyte
+	pub const TransactionByteFee: Balance = BOLT / (1024 * 1024);
+	pub const TargetBlockFullness: Perquintill = Perquintill::from_percent(25);
+	pub AdjustmentVariable: Multiplier = Multiplier::saturating_from_rational(3, 100_000);
+	pub MinimumMultiplier: Multiplier = Multiplier::saturating_from_rational(1, 1_000_000_000u128);
 }
 
 impl pallet_transaction_payment::Trait for Runtime {
@@ -253,17 +270,151 @@ impl pallet_transaction_payment::Trait for Runtime {
 	type OnTransactionPayment = ();
 	type TransactionByteFee = TransactionByteFee;
 	type WeightToFee = IdentityFee<Balance>;
-	type FeeMultiplierUpdate = ();
+	type FeeMultiplierUpdate =
+		TargetedFeeAdjustment<Self, TargetBlockFullness, AdjustmentVariable, MinimumMultiplier>;
 }
+
+parameter_types! {
+	pub const TombstoneDeposit: Balance = 16 * MILLICENTS;
+	pub const RentByteFee: Balance = 100_000;
+	pub const RentDepositOffset: Balance = 1000 * MILLICENTS;
+	pub const SurchargeReward: Balance = 150 * MILLICENTS;
+}
+
+impl pallet_contracts::Trait for Runtime {
+	type Time = Timestamp;
+	type Randomness = RandomnessCollectiveFlip;
+	type Currency = Balances;
+	type Event = Event;
+	type DetermineContractAddress = pallet_contracts::SimpleAddressDeterminer<Runtime>;
+	type TrieIdGenerator = pallet_contracts::TrieIdFromParentCounter<Runtime>;
+	type RentPayment = ();
+	type SignedClaimHandicap = pallet_contracts::DefaultSignedClaimHandicap;
+	type TombstoneDeposit = TombstoneDeposit;
+	type StorageSizeOffset = pallet_contracts::DefaultStorageSizeOffset;
+	type RentByteFee = RentByteFee;
+	type RentDepositOffset = RentDepositOffset;
+	type SurchargeReward = SurchargeReward;
+	type MaxDepth = pallet_contracts::DefaultMaxDepth;
+	type MaxValueSize = pallet_contracts::DefaultMaxValueSize;
+	type WeightPrice = pallet_transaction_payment::Module<Self>;
+}
+
+type EnsureRootOrHalfGeneralCouncil = EnsureOneOf<
+	AccountId,
+	EnsureRoot<AccountId>,
+	pallet_collective::EnsureProportionMoreThan<_1, _2, AccountId, GeneralCouncilInstance>,
+>;
+
+type EnsureRootOrTwoThirdsGeneralCouncil = EnsureOneOf<
+	AccountId,
+	EnsureRoot<AccountId>,
+	pallet_collective::EnsureProportionMoreThan<_2, _3, AccountId, GeneralCouncilInstance>,
+>;
+
+type EnsureRootOrThreeFourthsGeneralCouncil = EnsureOneOf<
+	AccountId,
+	EnsureRoot<AccountId>,
+	pallet_collective::EnsureProportionMoreThan<_3, _4, AccountId, GeneralCouncilInstance>,
+>;
 
 impl pallet_sudo::Trait for Runtime {
 	type Event = Event;
 	type Call = Call;
 }
 
-/// Configure the template pallet in pallets/template.
-impl pallet_template::Trait for Runtime {
+parameter_types! {
+	pub const GeneralCouncilMotionDuration: BlockNumber = 0;
+	pub const GeneralCouncilMaxProposals: u32 = 100;
+	pub const GeneralCouncilMaxMembers: u32 = 100;
+}
+
+type GeneralCouncilInstance = pallet_collective::Instance1;
+impl pallet_collective::Trait<GeneralCouncilInstance> for Runtime {
+	type Origin = Origin;
+	type Proposal = Call;
 	type Event = Event;
+	type MotionDuration = GeneralCouncilMotionDuration;
+	type MaxProposals = GeneralCouncilMaxProposals;
+	type MaxMembers = GeneralCouncilMaxMembers;
+	type DefaultVote = pallet_collective::PrimeDefaultVote;
+	type WeightInfo = ();
+}
+
+pub struct GeneralCouncilProvider;
+impl Contains<AccountId> for GeneralCouncilProvider {
+	fn contains(who: &AccountId) -> bool {
+		GeneralCouncil::is_member(who)
+	}
+
+	fn sorted_members() -> Vec<AccountId> {
+		GeneralCouncil::members()
+	}
+
+	#[cfg(feature = "runtime-benchmarks")]
+	fn add(_: &AccountId) {
+		todo!()
+	}
+}
+
+impl ContainsLengthBound for GeneralCouncilProvider {
+	fn max_len() -> usize {
+		100
+	}
+	fn min_len() -> usize {
+		0
+	}
+}
+
+parameter_types! {
+	pub const ProposalBond: Permill = Permill::from_percent(5);
+	pub const ProposalBondMinimum: Balance = DOLLARS;
+	pub const SpendPeriod: BlockNumber = DAYS;
+	pub const Burn: Permill = Permill::from_percent(0);
+	pub const TipCountdown: BlockNumber = DAYS;
+	pub const TipFindersFee: Percent = Percent::from_percent(10);
+	pub const TipReportDepositBase: Balance = DOLLARS;
+	pub const DataDepositPerByte: Balance = CENTS;
+	pub const SevenDays: BlockNumber = 7 * DAYS;
+	pub const ZeroDay: BlockNumber = 0;
+	pub const OneDay: BlockNumber = DAYS;
+	pub const BountyDepositBase: Balance = DOLLARS;
+	pub const BountyDepositPayoutDelay: BlockNumber = DAYS;
+	pub const BountyUpdatePeriod: BlockNumber = 14 * DAYS;
+	pub const BountyCuratorDeposit: Permill = Permill::from_percent(50);
+	pub const BountyValueMinimum: Balance = 5 * DOLLARS;
+	pub const MaximumReasonLength: u32 = 16384;
+}
+
+parameter_types! {
+	pub const BitCountryTreasuryModuleId: ModuleId = ModuleId(*b"bit/trsy");
+	pub const CountryFundModuleId: ModuleId = ModuleId(*b"bit/fund");
+}
+
+impl pallet_treasury::Trait for Runtime {
+	type ModuleId = BitCountryTreasuryModuleId;
+	type Currency = Balances;
+	type ApproveOrigin = EnsureRootOrHalfGeneralCouncil;
+	type RejectOrigin = EnsureRootOrHalfGeneralCouncil;
+	type Tippers = GeneralCouncilProvider;
+	type TipCountdown = TipCountdown;
+	type TipFindersFee = TipFindersFee;
+	type TipReportDepositBase = TipReportDepositBase;
+	type DataDepositPerByte = DataDepositPerByte;
+	type Event = Event;
+	type OnSlash = ();
+	type ProposalBond = ProposalBond;
+	type ProposalBondMinimum = ProposalBondMinimum;
+	type SpendPeriod = SpendPeriod;
+	type Burn = Burn;
+	type BountyDepositBase = BountyDepositBase;
+	type BountyDepositPayoutDelay = BountyDepositPayoutDelay;
+	type BountyUpdatePeriod = BountyUpdatePeriod;
+	type BountyCuratorDeposit = BountyCuratorDeposit;
+	type BountyValueMinimum = BountyValueMinimum;
+	type MaximumReasonLength = MaximumReasonLength;
+	type BurnDestination = ();
+	type WeightInfo = ();
 }
 
 // Create the runtime by composing the FRAME pallets that were previously configured.
@@ -281,11 +432,15 @@ construct_runtime!(
 		Balances: pallet_balances::{Module, Call, Storage, Config<T>, Event<T>},
 		TransactionPayment: pallet_transaction_payment::{Module, Storage},
 		Sudo: pallet_sudo::{Module, Call, Config<T>, Storage, Event<T>},
-		// Include the custom logic from the template pallet in the runtime.
-		TemplateModule: pallet_template::{Module, Call, Storage, Event<T>},
+		Contracts: pallet_contracts::{Module, Call, Config, Storage, Event<T>},
+
+		// Governance
+		GeneralCouncil: pallet_collective::<Instance1>::{Module, Call, Storage, Origin<T>, Event<T>, Config<T>},
+
+		//Treasury
+		ThunderousTreasury: pallet_treasury::{Module, Call, Storage, Config, Event<T>},
 	}
 );
-
 /// The address format for describing accounts.
 pub type Address = AccountId;
 /// Block header type as expected by this runtime.
@@ -304,7 +459,7 @@ pub type SignedExtra = (
 	frame_system::CheckEra<Runtime>,
 	frame_system::CheckNonce<Runtime>,
 	frame_system::CheckWeight<Runtime>,
-	pallet_transaction_payment::ChargeTransactionPayment<Runtime>
+	pallet_transaction_payment::ChargeTransactionPayment<Runtime>,
 );
 /// Unchecked extrinsic type as expected by this runtime.
 pub type UncheckedExtrinsic = generic::UncheckedExtrinsic<Address, Call, Signature, SignedExtra>;
@@ -440,6 +595,42 @@ impl_runtime_apis! {
 			len: u32,
 		) -> pallet_transaction_payment_rpc_runtime_api::RuntimeDispatchInfo<Balance> {
 			TransactionPayment::query_info(uxt, len)
+		}
+	}
+
+	impl pallet_contracts_rpc_runtime_api::ContractsApi<Block, AccountId, Balance, BlockNumber>
+		for Runtime
+	{
+		fn call(
+			origin: AccountId,
+			dest: AccountId,
+			value: Balance,
+			gas_limit: u64,
+			input_data: Vec<u8>,
+		) -> ContractExecResult {
+			let (exec_result, gas_consumed) =
+				Contracts::bare_call(origin, dest.into(), value, gas_limit, input_data);
+			match exec_result {
+				Ok(v) => ContractExecResult::Success {
+					flags: v.flags.bits(),
+					data: v.data,
+					gas_consumed: gas_consumed,
+				},
+				Err(_) => ContractExecResult::Error,
+			}
+		}
+
+		fn get_storage(
+			address: AccountId,
+			key: [u8; 32],
+		) -> pallet_contracts_primitives::GetStorageResult {
+			Contracts::get_storage(address, key)
+		}
+
+		fn rent_projection(
+			address: AccountId,
+		) -> pallet_contracts_primitives::RentProjectionResult<BlockNumber> {
+			Contracts::rent_projection(address)
 		}
 	}
 
