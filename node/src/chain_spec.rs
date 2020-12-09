@@ -244,7 +244,7 @@ pub fn bitcountry_properties() -> Properties {
 
 	properties.insert("ss58Format".into(), 28.into());
 	properties.insert("tokenDecimals".into(), 12.into());
-	properties.insert("tokenSymbol".into(), "BCG".into());
+	properties.insert("tokenSymbol".into(), "BOLT".into());
 
 	properties
 }
