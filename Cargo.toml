@@ -4,6 +4,12 @@ panic = 'unwind'
 [workspace]
 members = [
     'node',
-    'pallets/template',
+    # 'pallets/country',
+    # 'pallets/block',
     'runtime',
+]
+exclude = [
+    'luckydraw',
+    'airdrop',
+    'countrytoken'
 ]
