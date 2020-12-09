@@ -9,7 +9,6 @@ use frame_support::{
 	StorageMap, StorageValue,
 };
 use frame_system::{self as system, ensure_root, ensure_signed};
-use nft;
 use primitives::{Balance, CurrencyId, ProgrammeId};
 use sp_core::H256;
 use sp_runtime::{
@@ -18,7 +17,6 @@ use sp_runtime::{
 	DispatchError, ModuleId, RuntimeDebug,
 };
 use sp_std::vec::Vec;
-use unique_asset::AssetId;
 
 #[derive(Encode, Decode, Clone, Eq, PartialEq, RuntimeDebug)]
 pub struct Programme<AccountId> {
@@ -32,12 +30,6 @@ pub struct ProgrammeFund<AccountId, Balance> {
 	pub vault: AccountId,
 	pub value: Balance,
 }
-
-#[cfg(test)]
-mod mock;
-
-#[cfg(test)]
-mod tests;
 
 pub trait Trait: system::Trait {
 	type Event: From<Event<Self>> + Into<<Self as system::Trait>::Event>;
@@ -126,7 +118,7 @@ decl_module! {
 			ensure_root(origin)?;
 
 			FreezingProgrammes::try_mutate(programme_id, |freeze_programme| -> DispatchResult{
-				ensure!(freeze_programme.take().is_some(), Error::<T>::ProgrammeInfoNotFound);
+				// ensure!(freeze_programme.take().is_some(), Error::<T>::ProgrammeInfoNotFound);
 
 				Self::deposit_event(RawEvent::ProgrammeUnFreezed(programme_id));
 				Ok(())

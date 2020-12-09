@@ -1,10 +1,10 @@
 [package]
 authors = ['Thunderous Network <https://github.com/thunder-university>']
-description = 'Thunderous Network pallet for section logic.'
+description = 'Thunderous Network pallet for unique asset of the country.'
 edition = '2018'
 homepage = 'https://thunderous.network'
 license = 'Unlicense'
-name = 'pallet-section'
+name = 'pallet-admission'
 repository = 'https://github.com/thunder-university'
 version = '2.0.0-rc6'
 
@@ -35,12 +35,8 @@ sp-session = { version = "2.0.0", default-features = false }
 sp-std = { version = "2.0.0", default-features = false }
 sp-transaction-pool = { version = "2.0.0", default-features = false }
 sp-version = { version = "2.0.0", default-features = false }
+primitives = { package = "bit-country-primitives", path = "../primitives", default-features = false }
 
-[dependencies.unique-asset]
-default-features = false
-package = 'pallet-certificate'
-path = '../certificate'
-version = '2.0.0-rc6'
 
 [features]
 default = ['std']
@@ -50,6 +46,7 @@ std = [
     'frame-system/std',
     'sp-runtime/std',
     'sp-core/std',
-    'country/std',
-    'unique-asset/std',
+    'sp-std/std', 
+    'pallet-balances/std',
+    'primitives/std',
 ]

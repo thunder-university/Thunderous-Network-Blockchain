@@ -5,7 +5,7 @@ description = 'A decentralised education platform powered by blockchain.'
 edition = '2018'
 homepage = 'https://thunderous.network'
 license = 'Unlicense'
-name = 'bitcountry-node'
+name = 'thunderous-node'
 repository = 'https://github.com/thunder-university/'
 version = '0.0.1'
 
@@ -43,10 +43,10 @@ sc-basic-authorship = "0.8.0"
 substrate-frame-rpc-system = "2.0.0"
 pallet-transaction-payment-rpc = "2.0.0"
 pallet-contracts-rpc = "0.8.0"
-bitcountry-runtime = { version = "2.0.0-rc6", path = "../runtime" }
+thunderous-runtime = { version = "2.0.0-rc6", path = "../runtime" }
 
 [[bin]]
-name = "bitcountry-node"
+name = "thunder-node"
 path = "src/main.rs"
 
 

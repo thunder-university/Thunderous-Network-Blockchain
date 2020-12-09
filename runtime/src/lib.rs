@@ -105,8 +105,8 @@ pub mod opaque {
 }
 
 pub const VERSION: RuntimeVersion = RuntimeVersion {
-	spec_name: create_runtime_str!("bitcountry-node"),
-	impl_name: create_runtime_str!("bitcountry-node"),
+	spec_name: create_runtime_str!("thunderous-node"),
+	impl_name: create_runtime_str!("thunderous-node"),
 	authoring_version: 1,
 	spec_version: 8,
 	impl_version: 0,
@@ -417,6 +417,23 @@ impl pallet_treasury::Trait for Runtime {
 	type WeightInfo = ();
 }
 
+impl pallet_certificate::Trait for Runtime {
+	type Event = Event;
+}
+
+impl pallet_programme::Trait for Runtime {
+	type Event = Event;
+	type ModuleId = CountryFundModuleId;
+}
+
+impl pallet_admission::Trait for Runtime {
+	type Event = Event;
+}
+
+impl rule_engine::Trait for Runtime {
+	type Event = Event;
+}
+
 // Create the runtime by composing the FRAME pallets that were previously configured.
 construct_runtime!(
 	pub enum Runtime where
@@ -439,6 +456,12 @@ construct_runtime!(
 
 		//Treasury
 		ThunderousTreasury: pallet_treasury::{Module, Call, Storage, Config, Event<T>},
+
+		//Thunderous modules
+		Certificate: pallet_certificate::{Module, Call, Storage, Event<T>},
+		Programme: pallet_programme::{Module, Call, Storage, Event<T>},
+		Admission: pallet_admission::{Module, Call, Storage, Event<T>},
+		RuleEngineWorker: rule_engine::{Module, Call, Storage, Event<T>},
 	}
 );
 /// The address format for describing accounts.

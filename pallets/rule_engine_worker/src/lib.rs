@@ -13,9 +13,7 @@ use sp_core::H256;
 use frame_system::{self as system, ensure_signed, ensure_root};
 use sp_runtime::traits::Hash;
 use sp_std::vec::Vec;
-use country:: {CountryOwner};
-use unique_asset;
-use primitives::{ Balance, CurrencyId, ProgrammeId, BlockNumber, StudentId};
+use primitives::{ Balance, CurrencyId, ProgrammeId, BlockNumber, StudentId, RuleId};
 
 #[derive(Encode, Decode, Default, Clone, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
@@ -32,13 +30,8 @@ pub struct Rule {
 	metadata: Vec<u8>,
 }
 
-
-#[cfg(test)]
-mod tests;
-
-pub trait Trait: system::Trait + country::Trait {
+pub trait Trait: system::Trait {
 	type Event: From<Event<Self>> + Into<<Self as system::Trait>::Event>;
-	type BlockRandomnessSource: Randomness<H256>;
 }
 
 decl_storage! {
@@ -78,22 +71,22 @@ decl_module! {
 	pub struct Module<T: Trait> for enum Call where origin: T::Origin {
 		fn deposit_event() = default;
 
-		#[weight = 10_000]
-		fn create_rule(origin, metadata: Vec<u8>) -> DispatchResult{
+		#[weight= 10_000]
+		pub fn create_rule(origin, metadata: Vec<u8>) -> DispatchResult{
 			let sender = ensure_signed(origin)?;
 
 			Ok(())
 		}
 
-		#[weight = 10_000]
-		fn log_kpi(origin, student_id: StudentId, programme_id: ProgrammeId ,metadata: Vec<u8>) -> DispatchResult{
+		#[weight= 10_000]
+		pub fn log_kpi(origin, student_id: StudentId, programme_id: ProgrammeId ,metadata: Vec<u8>) -> DispatchResult{
 			let sender = ensure_root(origin)?;
 
 			Ok(())
 		}
 
-		#[weight = 10_000]
-		fn refund_admission(origin, student_id: StudentId, programme_id: ProgrammeId) -> DispatchResult{
+		#[weight= 10_000]
+		pub fn refund_admission(origin, student_id: StudentId, programme_id: ProgrammeId) -> DispatchResult{
 			let sender = ensure_root(origin)?;
 
 			Ok(())

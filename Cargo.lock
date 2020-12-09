@@ -385,83 +385,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "bitcountry-node"
-version = "0.0.1"
-dependencies = [
- "bitcountry-runtime",
- "hex-literal",
- "jsonrpc-core",
- "pallet-contracts",
- "pallet-contracts-rpc",
- "pallet-transaction-payment-rpc",
- "sc-basic-authorship",
- "sc-cli",
- "sc-client-api",
- "sc-consensus",
- "sc-consensus-aura",
- "sc-executor",
- "sc-finality-grandpa",
- "sc-rpc",
- "sc-rpc-api",
- "sc-service",
- "sc-transaction-pool",
- "sp-api",
- "sp-block-builder",
- "sp-blockchain",
- "sp-consensus",
- "sp-consensus-aura",
- "sp-core",
- "sp-finality-grandpa",
- "sp-inherents",
- "sp-runtime",
- "sp-transaction-pool",
- "structopt",
- "substrate-build-script-utils",
- "substrate-frame-rpc-system",
-]
-
-[[package]]
-name = "bitcountry-runtime"
-version = "2.0.0-rc6"
-dependencies = [
- "bit-country-primitives",
- "frame-executive",
- "frame-support",
- "frame-system",
- "frame-system-rpc-runtime-api",
- "orml-currencies",
- "orml-tokens",
- "pallet-aura",
- "pallet-balances",
- "pallet-certificate",
- "pallet-collective",
- "pallet-contracts",
- "pallet-contracts-primitives",
- "pallet-contracts-rpc-runtime-api",
- "pallet-grandpa",
- "pallet-randomness-collective-flip",
- "pallet-sudo",
- "pallet-timestamp",
- "pallet-transaction-payment",
- "pallet-transaction-payment-rpc-runtime-api",
- "pallet-treasury",
- "parity-scale-codec",
- "serde",
- "sp-api",
- "sp-block-builder",
- "sp-consensus-aura",
- "sp-core",
- "sp-inherents",
- "sp-offchain",
- "sp-runtime",
- "sp-session",
- "sp-std",
- "sp-transaction-pool",
- "sp-version",
- "substrate-wasm-builder-runner",
-]
-
-[[package]]
 name = "bitflags"
 version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3485,6 +3408,36 @@ dependencies = [
 ]
 
 [[package]]
+name = "pallet-admission"
+version = "2.0.0-rc6"
+dependencies = [
+ "bit-country-primitives",
+ "frame-executive",
+ "frame-support",
+ "frame-system",
+ "pallet-aura",
+ "pallet-balances",
+ "pallet-grandpa",
+ "pallet-randomness-collective-flip",
+ "pallet-sudo",
+ "pallet-timestamp",
+ "pallet-transaction-payment",
+ "parity-scale-codec",
+ "serde",
+ "sp-api",
+ "sp-block-builder",
+ "sp-consensus-aura",
+ "sp-core",
+ "sp-inherents",
+ "sp-offchain",
+ "sp-runtime",
+ "sp-session",
+ "sp-std",
+ "sp-transaction-pool",
+ "sp-version",
+]
+
+[[package]]
 name = "pallet-aura"
 version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3539,6 +3492,7 @@ dependencies = [
 name = "pallet-certificate"
 version = "2.0.0-rc6"
 dependencies = [
+ "bit-country-primitives",
  "frame-executive",
  "frame-support",
  "frame-system",
@@ -3687,6 +3641,41 @@ dependencies = [
 ]
 
 [[package]]
+name = "pallet-programme"
+version = "2.0.0-rc6"
+dependencies = [
+ "bit-country-primitives",
+ "frame-executive",
+ "frame-support",
+ "frame-system",
+ "orml-currencies",
+ "orml-tokens",
+ "orml-traits",
+ "pallet-aura",
+ "pallet-balances",
+ "pallet-certificate",
+ "pallet-grandpa",
+ "pallet-randomness-collective-flip",
+ "pallet-sudo",
+ "pallet-timestamp",
+ "pallet-transaction-payment",
+ "parity-scale-codec",
+ "serde",
+ "sp-api",
+ "sp-block-builder",
+ "sp-consensus-aura",
+ "sp-core",
+ "sp-inherents",
+ "sp-io",
+ "sp-offchain",
+ "sp-runtime",
+ "sp-session",
+ "sp-std",
+ "sp-transaction-pool",
+ "sp-version",
+]
+
+[[package]]
 name = "pallet-randomness-collective-flip"
 version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3698,6 +3687,37 @@ dependencies = [
  "safe-mix",
  "sp-runtime",
  "sp-std",
+]
+
+[[package]]
+name = "pallet-rule-engine"
+version = "2.0.0-rc6"
+dependencies = [
+ "bit-country-primitives",
+ "frame-executive",
+ "frame-support",
+ "frame-system",
+ "pallet-aura",
+ "pallet-balances",
+ "pallet-certificate",
+ "pallet-grandpa",
+ "pallet-randomness-collective-flip",
+ "pallet-sudo",
+ "pallet-timestamp",
+ "pallet-transaction-payment",
+ "parity-scale-codec",
+ "serde",
+ "sp-api",
+ "sp-block-builder",
+ "sp-consensus-aura",
+ "sp-core",
+ "sp-inherents",
+ "sp-offchain",
+ "sp-runtime",
+ "sp-session",
+ "sp-std",
+ "sp-transaction-pool",
+ "sp-version",
 ]
 
 [[package]]
@@ -6936,6 +6956,86 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d050e60b33d41c19108b32cea32164033a9013fe3b46cbd4457559bfbf77afaa"
 dependencies = [
  "num_cpus",
+]
+
+[[package]]
+name = "thunderous-node"
+version = "0.0.1"
+dependencies = [
+ "hex-literal",
+ "jsonrpc-core",
+ "pallet-contracts",
+ "pallet-contracts-rpc",
+ "pallet-transaction-payment-rpc",
+ "sc-basic-authorship",
+ "sc-cli",
+ "sc-client-api",
+ "sc-consensus",
+ "sc-consensus-aura",
+ "sc-executor",
+ "sc-finality-grandpa",
+ "sc-rpc",
+ "sc-rpc-api",
+ "sc-service",
+ "sc-transaction-pool",
+ "sp-api",
+ "sp-block-builder",
+ "sp-blockchain",
+ "sp-consensus",
+ "sp-consensus-aura",
+ "sp-core",
+ "sp-finality-grandpa",
+ "sp-inherents",
+ "sp-runtime",
+ "sp-transaction-pool",
+ "structopt",
+ "substrate-build-script-utils",
+ "substrate-frame-rpc-system",
+ "thunderous-runtime",
+]
+
+[[package]]
+name = "thunderous-runtime"
+version = "2.0.0-rc6"
+dependencies = [
+ "bit-country-primitives",
+ "frame-executive",
+ "frame-support",
+ "frame-system",
+ "frame-system-rpc-runtime-api",
+ "orml-currencies",
+ "orml-tokens",
+ "pallet-admission",
+ "pallet-aura",
+ "pallet-balances",
+ "pallet-certificate",
+ "pallet-collective",
+ "pallet-contracts",
+ "pallet-contracts-primitives",
+ "pallet-contracts-rpc-runtime-api",
+ "pallet-grandpa",
+ "pallet-programme",
+ "pallet-randomness-collective-flip",
+ "pallet-rule-engine",
+ "pallet-sudo",
+ "pallet-timestamp",
+ "pallet-transaction-payment",
+ "pallet-transaction-payment-rpc-runtime-api",
+ "pallet-treasury",
+ "parity-scale-codec",
+ "serde",
+ "sp-api",
+ "sp-block-builder",
+ "sp-consensus-aura",
+ "sp-core",
+ "sp-inherents",
+ "sp-offchain",
+ "sp-runtime",
+ "sp-session",
+ "sp-std",
+ "sp-transaction-pool",
+ "sp-version",
+ "substrate-wasm-builder-runner",
 ]
 
 [[package]]

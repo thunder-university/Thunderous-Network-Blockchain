@@ -1,4 +1,4 @@
-use bitcountry_runtime::{
+use thunderous_runtime::{
 	AccountId, AuraConfig, BalancesConfig, ContractsConfig, GenesisConfig, GrandpaConfig,
 	Signature, SudoConfig, SystemConfig, WASM_BINARY,
 };
@@ -44,7 +44,7 @@ pub fn development_config() -> Result<ChainSpec, String> {
 
 	Ok(ChainSpec::from_genesis(
 		// Name
-		"Bit.Country Dev Chain",
+		"Thunderous Network",
 		// ID
 		"dev",
 		ChainType::Development,

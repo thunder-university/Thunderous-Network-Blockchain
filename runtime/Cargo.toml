@@ -3,7 +3,7 @@ authors = ['Substrate DevHub <https://github.com/substrate-developer-hub>']
 edition = '2018'
 homepage = 'https://substrate.dev'
 license = 'Unlicense'
-name = 'bitcountry-runtime'
+name = 'thunderous-runtime'
 repository = 'https://github.com/substrate-developer-hub/substrate-node-template/'
 version = '2.0.0-rc6'
 
@@ -53,11 +53,10 @@ pallet-contracts-rpc-runtime-api = { version = "0.8.0", default-features = false
 
 primitives = { package = "bit-country-primitives", path = "../pallets/primitives", default-features = false }
 
-[dependencies.unique-asset]
-default-features = false
-package = 'pallet-certificate'
-path = '../pallets/certificate'
-version = '2.0.0-rc6'
+pallet-certificate = { package = "pallet-certificate", path = "../pallets/certificate", default-features = false }
+pallet-admission = { package = "pallet-admission", path = "../pallets/admission", default-features = false }
+pallet-programme = { package = "pallet-programme", path = "../pallets/programme", default-features = false }
+rule-engine = { package = "pallet-rule-engine", path = "../pallets/rule_engine_worker", default-features = false }
 
 [build-dependencies]
 wasm-builder-runner = { version = "1.0.6", package = "substrate-wasm-builder-runner" }
@@ -94,7 +93,10 @@ std = [
     'primitives/std',
     'orml-currencies/std',
     'orml-tokens/std',
-    'unique-asset/std',
+    'pallet-certificate/std',
+    'pallet-admission/std',
+    'pallet-programme/std',
+    'rule-engine/std',
     "pallet-contracts/std",
     "pallet-contracts-primitives/std",
     "pallet-contracts-rpc-runtime-api/std",
